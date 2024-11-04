@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Валютный обменник</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://img.freepik.com/premium-vector/stock-market-graph-forex-trading-chart-business-financial-concepts_87788-132.jpg');
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            margin: 0 auto;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .details {
+            margin-top: 20px;
+            display: none;
+        }
+        .icon {
+            margin-top: 10px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 350px;
+        }
+        th, td {
+            border: 1px solid white;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Обмен валюты</h1>
+
+        <!-- Отображение текущих курсов валют -->
+        <h2>Курс НБКР все курсы</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Валюта</th>
+                    <th>Покупка</th>
+                    <th>Продажа</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>USD</td>
+                    <td>85.800</td>
+                    <td>86.15</td>
+                </tr>
+                <tr>
+                    <td>EUR</td>
+                    <td>93.20</td>
+                    <td>93.84</td>
+                </tr>
+                <tr>
+                    <td>RUB</td>
+                    <td>0.883</td>
+                    <td>0.898</td>
+                </tr>
+                <tr>
+                    <td>KZT</td>
+                    <td>0.1758</td>
+                    <td>0.1892</td>
+                </tr>
+                <tr>
+                    <td>CNY</td>
+                    <td>12.04</td>
+                    <td>12.80</td>
+                </tr>
+                <tr>
+                    <td>GBP</td>
+                    <td>110.00</td>
+                    <td>110.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <label for="fromCurrency">Выберите валюту для обмена:</label>
+        <select id="fromCurrency">
+            <option value="CNY">Юань</option>
+            <option value="KGS">Сом</option>
+            <option value="EUR">Евро</option>
+            <option value="USD">Американский доллар</option>
+        </select>
+
+        <label for="toCurrency">Выберите валюту, на которую хотите обменять:</label>
+        <select id="toCurrency">
+            <option value="KGS">Сом</option>
+            <option value="CNY">Юань</option>
+            <option value="EUR">Евро</option>
+            <option value="USD">Американский доллар</option>
+        </select>
+
+        <label for="amount">Введите сумму:</label>
+        <input type="number" id="amount" placeholder="Сумма для обмена">
+
+        <button id="submitBtn">Готов</button>
+
+        <div class="details" id="exchangeDetails">
+            <h2>Детали обмена</h2>
+            <p>Вы хотите обменять <span id="exchangeAmount"></span> на <span id="exchangeToCurrency"></span></p>
+            <p>Вы получите: <span id="receivedAmount"></span></p>
+            <div class="icon">
+                <img src="https://play-lh.googleusercontent.com/xf5_bSz5pNxQHd2K9yig3wM8LAaDigaLhMWdjsVKwSPW0CoyFXoJNUr7Iix1hzTgyg0" alt="М Банк" width="50">
+                <p>М Банк номер: 0997 999 709</p>
+            </div>
+            <p id="waitingMessage">Подождите, мы проверяем...</p>
+        </div>
+    </div>
+
+    <script>
+        const exchangeRates = {
+            "CNY": 12.04,
+            "KGS": 1,
+            "EUR": 93.20,
+            "USD": 85.800
+        };
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            var amount = parseFloat(document.getElementById('amount').value);
+            var fromCurrency = document.getElementById('fromCurrency').value;
+            var toCurrency = document.getElementById('toCurrency').value;
+
+            // Показать детали обмена
+            document.getElementById('exchangeAmount').innerText = amount + ' ' + fromCurrency;
+            document.getElementById('exchangeToCurrency').innerText = toCurrency;
+
+            // Вычислить получаемую сумму
+            var receivedAmount = amount * (exchangeRates[toCurrency] / exchangeRates[fromCurrency]);
+            document.getElementById('receivedAmount').innerText = receivedAmount.toFixed(2) + ' ' + toCurrency;
+
+            // Отобразить детали обмена
+            document.getElementById('exchangeDetails').style.display = 'block';
+
+            // Показать сообщение ожидания
+            document.getElementById('waitingMessage').style.display = 'block';
+            
+            // После 10 секунд отображаем иконку и номер банка
+            setTimeout(function() {
+                document.getElementById('waitingMessage').style.display = 'none';
+                alert("Вы успешно обменяли " + amount + " " + fromCurrency + " на " + receivedAmount.toFixed(2) + " " + toCurrency + "."); // Можете убрать, если не нужно
+            }, 10000);
+        });
+    </script>
+</body>
+</html>
